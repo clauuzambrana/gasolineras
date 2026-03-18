@@ -1,0 +1,5 @@
+### Cargar datos del gobierno
+POST http://localhost:8080/api/actualizar
+
+### Ver última actualización
+GET http://localhost:8080/api/ultima-actualizacion
