@@ -3,3 +3,6 @@ POST http://localhost:8080/api/actualizar
 
 ### Ver última actualización
 GET http://localhost:8080/api/ultima-actualizacion
+
+### Calcular ruta y gasolineras
+GET http://localhost:8080/api/ruta?origen=Madrid&destino=Toledo

@@ -1,0 +1,192 @@
+.panel-lateral {
+  width: 340px;
+  min-width: 340px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.panel-header {
+  background-color: #1a73e8;
+  color: white;
+  padding: 20px;
+}
+
+.panel-header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.panel-header p {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.formulario {
+  padding: 20px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.campo {
+  margin-bottom: 12px;
+}
+
+.campo label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f6368;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.campo input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #202124;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campo input:focus {
+  border-color: #1a73e8;
+}
+
+.campo input:disabled {
+  background-color: #f8f9fa;
+  color: #9aa0a6;
+}
+
+.formulario button {
+  width: 100%;
+  padding: 11px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background-color 0.2s;
+}
+
+.formulario button:hover:not(:disabled) {
+  background-color: #1557b0;
+}
+
+.formulario button:disabled {
+  background-color: #9aa0a6;
+  cursor: not-allowed;
+}
+
+.error-mensaje {
+  margin: 16px 20px;
+  padding: 12px;
+  background-color: #fce8e6;
+  color: #c5221f;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.mas-barata {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.mas-barata h2,
+.gasolinera-detalle h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5f6368;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.gasolinera-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid #e8eaed;
+  position: relative;
+}
+
+.gasolinera-card.destacada {
+  border-color: #1a73e8;
+  background-color: #e8f0fe;
+}
+
+.etiqueta-barata {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background-color: #1a73e8;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.gasolinera-card .nombre {
+  font-size: 15px;
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 4px;
+}
+
+.gasolinera-card .municipio {
+  font-size: 12px;
+  color: #5f6368;
+  margin-bottom: 8px;
+}
+
+.gasolinera-card .precio {
+  font-size: 13px;
+  color: #202124;
+  margin-top: 4px;
+}
+
+.gasolinera-card .precio strong {
+  color: #1a73e8;
+  font-size: 15px;
+}
+
+.gasolinera-detalle {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.detalle-linea {
+  font-size: 13px;
+  color: #202124;
+  margin-bottom: 4px;
+}
+
+.detalle-linea span {
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.ultima-actualizacion {
+  margin-top: auto;
+  padding: 14px 20px;
+  border-top: 1px solid #e8eaed;
+  background-color: #f8f9fa;
+}
+
+.ultima-actualizacion p {
+  font-size: 11px;
+  color: #9aa0a6;
+  text-align: center;
+}
