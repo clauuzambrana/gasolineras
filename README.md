@@ -23,7 +23,7 @@ Aplicación web para consultar y comparar precios de gasolineras, mostrando su u
 ## Pasos
 1. Clonar el repositorio
 2. Configurar application.properties con contraseña de PostgreSQL y API key de OpenRouteService 
-3. Arrancar el backend: ejecutar GasolinerasApplication desde VS Code o con mvn spring-boot:run
+3. Arrancar el backend: ejecutar GasolinerasApplication desde VS Code 
 4. Realizar una petición POST a http://localhost:8080/api/actualizar para cargar los datos del gobierno
 5. Arrancar el frontend:
    - cd frontend
