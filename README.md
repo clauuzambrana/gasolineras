@@ -14,13 +14,13 @@ Aplicación web para consultar y comparar precios de gasolineras, mostrando su u
 - Actualización de datos desde fuente oficial
 - Visualización de información detallada por gasolinera
 
-## Requisitos previos:
+## Requisitos previos
 - Java 21
 - PostgreSQL 16 con PostGIS en puerto 5434
 -  Node.js (versión 18 o superior)
 - Base de datos gasolineras_db creada con extensión postgis
 
-## Pasos:
+## Pasos
 1. Clonar el repositorio
 2. Configurar application.properties con contraseña de PostgreSQL y API key de OpenRouteService 
 3. Arrancar el backend: ejecutar GasolinerasApplication desde VS Code o con mvn spring-boot:run
