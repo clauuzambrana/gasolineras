@@ -19,8 +19,6 @@ public class RutaService {
     @Value("${openrouteservice.apikey}")
     private String apiKey;
 
-    private static final double MARGEN_GRADOS = 0.15;
-
     public RutaService(GasolineraRepository gasolineraRepository,
                        ActualizacionDatosRepository actualizacionRepository) {
         this.gasolineraRepository = gasolineraRepository;
@@ -29,48 +27,70 @@ public class RutaService {
     }
 
     public Map<String, Object> calcularRuta(String origen, String destino) {
-        // 1. Geocodificar origen y destino
-        double[] coordOrigen = geocodificar(origen);
-        double[] coordDestino = geocodificar(destino);
+    double[] coordOrigen = geocodificar(origen);
+    double[] coordDestino = geocodificar(destino);
 
-        if (coordOrigen == null || coordDestino == null) {
-            throw new RuntimeException("No se pudieron obtener las coordenadas de origen o destino");
-        }
-
-        // 2. Obtener ruta desde OpenRouteService
-        List<double[]> puntosRuta = obtenerPuntosRuta(coordOrigen, coordDestino);
-
-        // 3. Calcular bounding box con margen
-        double latMin = puntosRuta.stream().mapToDouble(p -> p[1]).min().getAsDouble() - MARGEN_GRADOS;
-        double latMax = puntosRuta.stream().mapToDouble(p -> p[1]).max().getAsDouble() + MARGEN_GRADOS;
-        double lonMin = puntosRuta.stream().mapToDouble(p -> p[0]).min().getAsDouble() - MARGEN_GRADOS;
-        double lonMax = puntosRuta.stream().mapToDouble(p -> p[0]).max().getAsDouble() + MARGEN_GRADOS;
-
-        // 4. Filtrar gasolineras dentro del bounding box
-        List<Gasolinera> gasolineras = gasolineraRepository
-                .findByLatitudBetweenAndLongitudBetween(latMin, latMax, lonMin, lonMax);
-
-        // 5. Encontrar la más barata
-        Gasolinera masBarata = gasolineras.stream()
-                .filter(g -> g.getPrecioGasolina95() != null)
-                .min(Comparator.comparingDouble(Gasolinera::getPrecioGasolina95))
-                .orElse(null);
-
-        // 6. Obtener última actualización
-        ActualizacionDatos ultimaActualizacion = actualizacionRepository
-                .findTopByOrderByFechaDescargaDesc()
-                .orElse(null);
-
-        // 7. Construir respuesta
-        Map<String, Object> respuesta = new HashMap<>();
-        respuesta.put("puntosRuta", puntosRuta);
-        respuesta.put("gasolineras", gasolineras);
-        respuesta.put("masBarata", masBarata);
-        respuesta.put("ultimaActualizacion", ultimaActualizacion);
-        respuesta.put("totalEncontradas", gasolineras.size());
-
-        return respuesta;
+    if (coordOrigen == null || coordDestino == null) {
+        throw new RuntimeException("No se pudieron obtener las coordenadas de origen o destino");
     }
+
+    List<double[]> puntosRuta = obtenerPuntosRuta(coordOrigen, coordDestino);
+
+    // Bounding box ampliado solo para prefiltrar eficientemente
+    double latMin = puntosRuta.stream().mapToDouble(p -> p[1]).min().getAsDouble() - 0.1;
+    double latMax = puntosRuta.stream().mapToDouble(p -> p[1]).max().getAsDouble() + 0.1;
+    double lonMin = puntosRuta.stream().mapToDouble(p -> p[0]).min().getAsDouble() - 0.1;
+    double lonMax = puntosRuta.stream().mapToDouble(p -> p[0]).max().getAsDouble() + 0.1;
+
+    List<Gasolinera> candidatas = gasolineraRepository
+            .findByLatitudBetweenAndLongitudBetween(latMin, latMax, lonMin, lonMax);
+
+    // Filtrar por distancia real a los puntos de la ruta
+    double radioKm = 2.5;
+    List<Gasolinera> gasolineras = candidatas.stream()
+            .filter(g -> estasCercaDeRuta(g.getLatitud(), g.getLongitud(), puntosRuta, radioKm))
+            .collect(java.util.stream.Collectors.toList());
+
+    Gasolinera masBarata = gasolineras.stream()
+            .filter(g -> g.getPrecioGasolina95() != null)
+            .min(Comparator.comparingDouble(Gasolinera::getPrecioGasolina95))
+            .orElse(null);
+
+    ActualizacionDatos ultimaActualizacion = actualizacionRepository
+            .findTopByOrderByFechaDescargaDesc()
+            .orElse(null);
+
+    Map<String, Object> respuesta = new HashMap<>();
+    respuesta.put("puntosRuta", puntosRuta);
+    respuesta.put("gasolineras", gasolineras);
+    respuesta.put("masBarata", masBarata);
+    respuesta.put("ultimaActualizacion", ultimaActualizacion);
+    respuesta.put("totalEncontradas", gasolineras.size());
+
+    return respuesta;
+}
+
+private boolean estasCercaDeRuta(double lat, double lon, List<double[]> puntosRuta, double radioKm) {
+    for (double[] punto : puntosRuta) {
+        double pLon = punto[0];
+        double pLat = punto[1];
+        if (distanciaKm(lat, lon, pLat, pLon) <= radioKm) {
+            return true;
+        }
+    }
+    return false;
+}
+
+private double distanciaKm(double lat1, double lon1, double lat2, double lon2) {
+    final double R = 6371.0;
+    double dLat = Math.toRadians(lat2 - lat1);
+    double dLon = Math.toRadians(lon2 - lon1);
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+            * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
 
     private double[] geocodificar(String direccion) {
         String url = "https://api.openrouteservice.org/geocode/search?api_key=" + apiKey

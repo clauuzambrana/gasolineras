@@ -20,6 +20,9 @@ function App() {
       if (!response.ok) throw new Error('Error al obtener la ruta')
       const data = await response.json()
       setResultado(data)
+      if (data.totalEncontradas === 0) {
+        setError('No se encontraron gasolineras cerca de esta ruta.')
+      }
     } catch (err) {
       setError(
         'No se pudo obtener la ruta. Comprueba los datos e inténtalo de nuevo.'
