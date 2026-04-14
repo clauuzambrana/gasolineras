@@ -7,10 +7,13 @@ import com.claudia.gasolineras.repository.GasolineraRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class ActualizacionService {
@@ -30,6 +33,15 @@ public class ActualizacionService {
     }
 
     public String actualizarDatos() {
+        // Comprobar si ya se ha actualizado hoy
+        Optional<ActualizacionDatos> ultimaOpt = actualizacionRepository.findTopByOrderByFechaDescargaDesc();
+        if (ultimaOpt.isPresent()) {
+            LocalDateTime ultimaFecha = ultimaOpt.get().getFechaDescarga();
+            if (ultimaFecha.toLocalDate().equals(LocalDate.now())) {
+                return "Los datos ya están actualizados para hoy. Última actualización: " + ultimaFecha;
+            }
+        }
+
         // 1. Llamar a la API del gobierno
         Map<String, Object> respuesta = restTemplate.getForObject(URL_GOBIERNO, Map.class);
 
@@ -48,7 +60,7 @@ public class ActualizacionService {
         actualizacion = actualizacionRepository.save(actualizacion);
 
         // 3. Borrar gasolineras anteriores y cargar las nuevas
-        gasolineraRepository.deleteAll();
+        gasolineraRepository.borrarTodas();
 
         List<Gasolinera> nuevasGasolineras = new ArrayList<>();
 
@@ -65,6 +77,7 @@ public class ActualizacionService {
                 g.setLongitud(parseDouble(getString(estacion, "Longitud (WGS84)")));
                 g.setPrecioGasolina95(parseDouble(getString(estacion, "Precio Gasolina 95 E5")));
                 g.setPrecioDiesel(parseDouble(getString(estacion, "Precio Gasoil A")));
+                g.setHorario(getString(estacion, "Horario"));
                 g.setActualizacion(actualizacion);
 
                 // Solo añadir si tiene coordenadas y precio válidos

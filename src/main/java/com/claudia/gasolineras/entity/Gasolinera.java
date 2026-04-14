@@ -30,6 +30,9 @@ public class Gasolinera {
     @Column(name = "precio_diesel")
     private Double precioDiesel;
 
+    @Column(name = "horario")
+    private String horario;
+
     @ManyToOne
     @JoinColumn(name = "id_actualizacion", nullable = false)
     private ActualizacionDatos actualizacion;
@@ -67,4 +70,7 @@ public class Gasolinera {
 
     public ActualizacionDatos getActualizacion() { return actualizacion; }
     public void setActualizacion(ActualizacionDatos actualizacion) { this.actualizacion = actualizacion; }
+
+    public String getHorario() { return horario; }
+    public void setHorario(String horario) { this.horario = horario; }
 }

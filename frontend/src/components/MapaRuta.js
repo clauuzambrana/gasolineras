@@ -17,30 +17,42 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
 
-const iconoNormal = new L.Icon({
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-  iconSize: [20, 33],
-  iconAnchor: [10, 33],
-  popupAnchor: [0, -33]
-})
+function crearIconoColor(color, tamaño = 24) {
+  return new L.DivIcon({
+    className: '',
+    html: `<div style="
+      background-color: ${color};
+      width: ${tamaño}px;
+      height: ${tamaño}px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 2px solid white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [tamaño, tamaño],
+    iconAnchor: [tamaño / 2, tamaño],
+    popupAnchor: [0, -(tamaño + 4)]
+  })
+}
 
-const iconoBarata = new L.DivIcon({
-  className: '',
-  html: `<div style="
-    background-color: #1a73e8;
-    width: 28px;
-    height: 28px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  "></div>`,
-  iconSize: [28, 28],
-  iconAnchor: [14, 28],
-  popupAnchor: [0, -30]
-})
+const iconoVerdeFuerte = crearIconoColor('#1b5e20', 32)
+const iconoVerde = crearIconoColor('#43a047', 24)
+const iconoAmarillo = crearIconoColor('#f9a825', 24)
+const iconoRojo = crearIconoColor('#e53935', 24)
+
+function obtenerIcono(gasolinera, masBarata, precioMin, precioMax) {
+  if (masBarata && gasolinera.id === masBarata.id) return iconoVerdeFuerte
+  if (!gasolinera.precioGasolina95 || precioMin === precioMax)
+    return iconoAmarillo
+
+  const rango = precioMax - precioMin
+  const tercio = rango / 3
+  const precio = gasolinera.precioGasolina95
+
+  if (precio <= precioMin + tercio) return iconoVerde
+  if (precio <= precioMin + 2 * tercio) return iconoAmarillo
+  return iconoRojo
+}
 
 function AjustarVista({ puntosRuta }) {
   const map = useMap()
@@ -57,10 +69,11 @@ function MapaRuta({
   puntosRuta,
   gasolineras,
   masBarata,
+  precioMin,
+  precioMax,
   onSeleccionarGasolinera
 }) {
   const posicionInicial = [40.4168, -3.7038]
-
   const puntosLeaflet = puntosRuta ? puntosRuta.map((p) => [p[1], p[0]]) : []
 
   return (
@@ -87,65 +100,62 @@ function MapaRuta({
       )}
 
       {gasolineras &&
-        gasolineras.map((gasolinera) => {
-          const esMasBarata = masBarata && gasolinera.id === masBarata.id
-          return (
-            <Marker
-              key={gasolinera.id}
-              position={[gasolinera.latitud, gasolinera.longitud]}
-              icon={esMasBarata ? iconoBarata : iconoNormal}
-              eventHandlers={{
-                click: () => onSeleccionarGasolinera(gasolinera)
-              }}
-            >
-              <Popup>
-                <div style={{ minWidth: '160px' }}>
-                  <p
-                    style={{
-                      fontWeight: '600',
-                      marginBottom: '4px',
-                      fontSize: '13px'
-                    }}
-                  >
-                    {gasolinera.nombre}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: '12px',
-                      color: '#5f6368',
-                      marginBottom: '6px'
-                    }}
-                  >
-                    {gasolinera.municipio}
-                  </p>
+        gasolineras.map((gasolinera) => (
+          <Marker
+            key={gasolinera.id}
+            position={[gasolinera.latitud, gasolinera.longitud]}
+            icon={obtenerIcono(gasolinera, masBarata, precioMin, precioMax)}
+            eventHandlers={{
+              click: () => onSeleccionarGasolinera(gasolinera)
+            }}
+          >
+            <Popup>
+              <div style={{ minWidth: '160px' }}>
+                <p
+                  style={{
+                    fontWeight: '600',
+                    marginBottom: '4px',
+                    fontSize: '13px'
+                  }}
+                >
+                  {gasolinera.nombre}
+                </p>
+                <p
+                  style={{
+                    fontSize: '12px',
+                    color: '#5f6368',
+                    marginBottom: '6px'
+                  }}
+                >
+                  {gasolinera.municipio}
+                </p>
+                <p style={{ fontSize: '13px' }}>
+                  Gasolina 95:{' '}
+                  <strong style={{ color: '#1a73e8' }}>
+                    {gasolinera.precioGasolina95}€
+                  </strong>
+                </p>
+                {gasolinera.precioDiesel && (
                   <p style={{ fontSize: '13px' }}>
-                    Gasolina 95:{' '}
-                    <strong style={{ color: '#1a73e8' }}>
-                      {gasolinera.precioGasolina95}€
-                    </strong>
+                    Diésel: <strong>{gasolinera.precioDiesel}€</strong>
                   </p>
-                  {gasolinera.precioDiesel && (
-                    <p style={{ fontSize: '13px' }}>
-                      Diésel: <strong>{gasolinera.precioDiesel}€</strong>
-                    </p>
-                  )}
-                  {esMasBarata && (
-                    <p
-                      style={{
-                        fontSize: '11px',
-                        color: '#1a73e8',
-                        fontWeight: '600',
-                        marginTop: '6px'
-                      }}
-                    >
-                      ★ Más barata de la ruta
-                    </p>
-                  )}
-                </div>
-              </Popup>
-            </Marker>
-          )
-        })}
+                )}
+                {masBarata && gasolinera.id === masBarata.id && (
+                  <p
+                    style={{
+                      fontSize: '11px',
+                      color: '#1b5e20',
+                      fontWeight: '600',
+                      marginTop: '6px'
+                    }}
+                  >
+                    ★ Más barata de la ruta
+                  </p>
+                )}
+              </div>
+            </Popup>
+          </Marker>
+        ))}
     </MapContainer>
   )
 }

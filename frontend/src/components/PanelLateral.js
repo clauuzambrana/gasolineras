@@ -115,6 +115,11 @@ function PanelLateral({
                 Diésel: <strong>{gasolineraSeleccionada.precioDiesel}€</strong>
               </p>
             )}
+            {gasolineraSeleccionada.horario && (
+              <p className='detalle-linea'>
+                <span>Horario:</span> {gasolineraSeleccionada.horario}
+              </p>
+            )}
           </div>
         </div>
       )}

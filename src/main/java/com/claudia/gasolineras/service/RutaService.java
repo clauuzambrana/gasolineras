@@ -46,7 +46,7 @@ public class RutaService {
             .findByLatitudBetweenAndLongitudBetween(latMin, latMax, lonMin, lonMax);
 
     // Filtrar por distancia real a los puntos de la ruta
-    double radioKm = 2.5;
+    double radioKm = 2;
     List<Gasolinera> gasolineras = candidatas.stream()
             .filter(g -> estasCercaDeRuta(g.getLatitud(), g.getLongitud(), puntosRuta, radioKm))
             .collect(java.util.stream.Collectors.toList());
@@ -59,6 +59,17 @@ public class RutaService {
     ActualizacionDatos ultimaActualizacion = actualizacionRepository
             .findTopByOrderByFechaDescargaDesc()
             .orElse(null);
+    
+    // Calular precio min y max para luego hacer media y mostrar por colores de precios las gasolineras
+    double precioMin = gasolineras.stream()
+        .filter(g -> g.getPrecioGasolina95() != null)
+        .mapToDouble(Gasolinera::getPrecioGasolina95)
+        .min().orElse(0);
+
+    double precioMax = gasolineras.stream()
+            .filter(g -> g.getPrecioGasolina95() != null)
+            .mapToDouble(Gasolinera::getPrecioGasolina95)
+            .max().orElse(0);
 
     Map<String, Object> respuesta = new HashMap<>();
     respuesta.put("puntosRuta", puntosRuta);
@@ -66,6 +77,8 @@ public class RutaService {
     respuesta.put("masBarata", masBarata);
     respuesta.put("ultimaActualizacion", ultimaActualizacion);
     respuesta.put("totalEncontradas", gasolineras.size());
+    respuesta.put("precioMin", precioMin);
+    respuesta.put("precioMax", precioMax);
 
     return respuesta;
 }

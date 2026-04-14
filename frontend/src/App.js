@@ -47,6 +47,8 @@ function App() {
           puntosRuta={resultado?.puntosRuta}
           gasolineras={resultado?.gasolineras}
           masBarata={resultado?.masBarata}
+          precioMin={resultado?.precioMin}
+          precioMax={resultado?.precioMax}
           onSeleccionarGasolinera={setGasolineraSeleccionada}
         />
       </div>
