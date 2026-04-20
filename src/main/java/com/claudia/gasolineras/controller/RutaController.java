@@ -19,8 +19,9 @@ public class RutaController {
     @GetMapping("/ruta")
     public ResponseEntity<Map<String, Object>> calcularRuta(
             @RequestParam String origen,
-            @RequestParam String destino) {
-        Map<String, Object> resultado = rutaService.calcularRuta(origen, destino);
+            @RequestParam String destino,
+            @RequestParam(required = false) String marca) {
+        Map<String, Object> resultado = rutaService.calcularRuta(origen, destino, marca);
         return ResponseEntity.ok(resultado);
     }
 }

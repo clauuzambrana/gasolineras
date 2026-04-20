@@ -4,14 +4,18 @@ import com.claudia.gasolineras.entity.ActualizacionDatos;
 import com.claudia.gasolineras.service.ActualizacionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class ActualizacionController {
     private final ActualizacionService actualizacionService;
+    private final com.claudia.gasolineras.repository.GasolineraRepository gasolineraRepository;
 
-    public ActualizacionController(ActualizacionService actualizacionService) {
+    public ActualizacionController(ActualizacionService actualizacionService,
+            com.claudia.gasolineras.repository.GasolineraRepository gasolineraRepository) {
         this.actualizacionService = actualizacionService;
+        this.gasolineraRepository = gasolineraRepository;
     }
 
     @PostMapping("/actualizar")
@@ -27,5 +31,11 @@ public class ActualizacionController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(ultima);
+    }
+
+    @GetMapping("/marcas")
+    public ResponseEntity<List<String>> obtenerMarcas() {
+        List<String> marcas = gasolineraRepository.findMarcasDistintas();
+        return ResponseEntity.ok(marcas);
     }
 }

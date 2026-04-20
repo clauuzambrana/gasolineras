@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MapaRuta from './components/MapaRuta'
 import PanelLateral from './components/PanelLateral'
 import './App.css'
@@ -8,20 +8,23 @@ function App() {
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState(null)
   const [gasolineraSeleccionada, setGasolineraSeleccionada] = useState(null)
+  const [marcas, setMarcas] = useState([])
+  const [marcaSeleccionada, setMarcaSeleccionada] = useState('')
 
-  const buscarRuta = async (origen, destino) => {
+  const buscarRuta = async (origen, destino, marca) => {
     setCargando(true)
     setError(null)
     setGasolineraSeleccionada(null)
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/ruta?origen=${encodeURIComponent(origen)}&destino=${encodeURIComponent(destino)}`
-      )
+      const url = `http://localhost:8080/api/ruta?origen=${encodeURIComponent(origen)}&destino=${encodeURIComponent(destino)}${marca ? `&marca=${encodeURIComponent(marca)}` : ''}`
+      const response = await fetch(url)
       if (!response.ok) throw new Error('Error al obtener la ruta')
       const data = await response.json()
       setResultado(data)
       if (data.totalEncontradas === 0) {
-        setError('No se encontraron gasolineras cerca de esta ruta.')
+        setError(
+          'No se encontraron gasolineras cerca de esta ruta. Prueba con otra.'
+        )
       }
     } catch (err) {
       setError(
@@ -32,6 +35,13 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    fetch('http://localhost:8080/api/marcas')
+      .then((res) => res.json())
+      .then((data) => setMarcas(data))
+      .catch(() => {})
+  }, [])
+
   return (
     <div className='app-container'>
       <PanelLateral
@@ -41,6 +51,9 @@ function App() {
         masBarata={resultado?.masBarata}
         ultimaActualizacion={resultado?.ultimaActualizacion}
         gasolineraSeleccionada={gasolineraSeleccionada}
+        marcas={marcas}
+        marcaSeleccionada={marcaSeleccionada}
+        onMarcaChange={setMarcaSeleccionada}
       />
       <div className='mapa-container'>
         <MapaRuta

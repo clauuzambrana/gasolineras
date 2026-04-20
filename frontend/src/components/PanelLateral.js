@@ -7,7 +7,10 @@ function PanelLateral({
   error,
   masBarata,
   ultimaActualizacion,
-  gasolineraSeleccionada
+  gasolineraSeleccionada,
+  marcas,
+  marcaSeleccionada,
+  onMarcaChange
 }) {
   const [origen, setOrigen] = useState('')
   const [destino, setDestino] = useState('')
@@ -15,7 +18,7 @@ function PanelLateral({
   const handleSubmit = (e) => {
     e.preventDefault()
     if (origen.trim() && destino.trim()) {
-      onBuscar(origen, destino)
+      onBuscar(origen, destino, marcaSeleccionada)
     }
   }
 
@@ -44,7 +47,6 @@ function PanelLateral({
             type='text'
             value={origen}
             onChange={(e) => setOrigen(e.target.value)}
-            placeholder='Ej: Madrid'
             disabled={cargando}
           />
         </div>
@@ -54,9 +56,37 @@ function PanelLateral({
             type='text'
             value={destino}
             onChange={(e) => setDestino(e.target.value)}
-            placeholder='Ej: Toledo'
             disabled={cargando}
           />
+        </div>
+        <div className='campo'>
+          <label>Filtrar por marca (opcional)</label>
+          <input
+            type='text'
+            list='lista-marcas'
+            value={marcaSeleccionada}
+            onChange={(e) => onMarcaChange(e.target.value)}
+            placeholder='Escribe una marca...'
+            disabled={cargando}
+          />
+          <datalist id='lista-marcas'>
+            {marcas
+              .filter((marca) =>
+                marca
+                  .toLowerCase()
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .includes(
+                    marcaSeleccionada
+                      .toLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                  )
+              )
+              .map((marca) => (
+                <option key={marca} value={marca} />
+              ))}
+          </datalist>
         </div>
         <button
           type='submit'

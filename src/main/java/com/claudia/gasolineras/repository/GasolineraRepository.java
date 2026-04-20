@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.Query;
+import java.util.List;
 
 @Repository
 public interface GasolineraRepository extends JpaRepository<Gasolinera, Long> {
@@ -21,4 +23,7 @@ public interface GasolineraRepository extends JpaRepository<Gasolinera, Long> {
     @Transactional
     @Query("DELETE FROM Gasolinera g")
     void borrarTodas();
+
+    @Query("SELECT DISTINCT g.marca FROM Gasolinera g WHERE g.marca IS NOT NULL ORDER BY g.marca")
+    List<String> findMarcasDistintas();
 }

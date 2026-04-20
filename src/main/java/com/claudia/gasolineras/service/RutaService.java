@@ -26,7 +26,7 @@ public class RutaService {
         this.restTemplate = new RestTemplate();
     }
 
-    public Map<String, Object> calcularRuta(String origen, String destino) {
+    public Map<String, Object> calcularRuta(String origen, String destino, String marca) {
     double[] coordOrigen = geocodificar(origen);
     double[] coordDestino = geocodificar(destino);
 
@@ -48,8 +48,10 @@ public class RutaService {
     // Filtrar por distancia real a los puntos de la ruta
     double radioKm = 2;
     List<Gasolinera> gasolineras = candidatas.stream()
-            .filter(g -> estasCercaDeRuta(g.getLatitud(), g.getLongitud(), puntosRuta, radioKm))
-            .collect(java.util.stream.Collectors.toList());
+        .filter(g -> estasCercaDeRuta(g.getLatitud(), g.getLongitud(), puntosRuta, radioKm))
+        .filter(g -> marca == null || marca.isEmpty() ||
+        g.getMarca() != null && g.getMarca().toLowerCase().contains(marca.toLowerCase()))
+        .collect(java.util.stream.Collectors.toList());
 
     Gasolinera masBarata = gasolineras.stream()
             .filter(g -> g.getPrecioGasolina95() != null)

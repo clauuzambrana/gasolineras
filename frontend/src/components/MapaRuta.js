@@ -35,13 +35,13 @@ function crearIconoColor(color, tamaño = 24) {
   })
 }
 
-const iconoVerdeFuerte = crearIconoColor('#1b5e20', 32)
+const iconoAzulFuerte = crearIconoColor('#2D5BE3', 32)
 const iconoVerde = crearIconoColor('#43a047', 24)
 const iconoAmarillo = crearIconoColor('#f9a825', 24)
 const iconoRojo = crearIconoColor('#e53935', 24)
 
 function obtenerIcono(gasolinera, masBarata, precioMin, precioMax) {
-  if (masBarata && gasolinera.id === masBarata.id) return iconoVerdeFuerte
+  if (masBarata && gasolinera.id === masBarata.id) return iconoAzulFuerte
   if (!gasolinera.precioGasolina95 || precioMin === precioMax)
     return iconoAmarillo
 
