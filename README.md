@@ -135,28 +135,6 @@ The application opens automatically at `http://localhost:3000`.
 
 ---
 
-## Project Structure
-gasolineras/
-├── src/
-│   └── main/java/com/claudia/gasolineras/
-│       ├── config/
-│       ├── controller/
-│       ├── entity/
-│       ├── repository/
-│       ├── service/
-│       └── GasolinerasApplication.java
-├── frontend/
-│   └── src/
-│       ├── components/
-│       │   ├── MapaRuta.js
-│       │   └── PanelLateral.js
-│       └── App.js
-├── test/
-│   └── api.http
-└── pom.xml
-
----
-
 ## Notes
 
 This project requires local infrastructure (PostgreSQL with PostGIS, Node.js and a valid OpenRouteService API key) and cannot be packaged as a standalone executable. Please follow the setup instructions above carefully before running the application.
