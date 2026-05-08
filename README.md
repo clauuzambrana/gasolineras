@@ -4,9 +4,11 @@ A web application that helps drivers find the cheapest petrol stations along the
 
 Price data is retrieved daily from the official source of the Spanish Ministry for Ecological Transition (MITECO).
 
-<img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/e037b717-b5dd-4e96-be70-1497255406da" />
-<img width="1915" height="910" alt="image" src="https://github.com/user-attachments/assets/7cd675b2-5d2a-4a7f-ab9d-be27e71d0c16" />
-<img width="1919" height="913" alt="image" src="https://github.com/user-attachments/assets/24ae3ee6-0d2e-4240-951f-1e330ab51ca1" />
+<img width="1535" height="731" alt="image" src="https://github.com/user-attachments/assets/e037b717-b5dd-4e96-be70-1497255406da" />
+
+<img width="1535" height="731" alt="image" src="https://github.com/user-attachments/assets/7cd675b2-5d2a-4a7f-ab9d-be27e71d0c16" />
+
+<img width="1535" height="731" alt="image" src="https://github.com/user-attachments/assets/24ae3ee6-0d2e-4240-951f-1e330ab51ca1" />
 
 ---
 
